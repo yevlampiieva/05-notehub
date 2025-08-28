@@ -7,6 +7,7 @@ import { fetchNotes } from "../../services/noteService";
 import css from "./App.module.css";
 import Modal from "../Modal/Modal";
 import NoteForm from "../NoteForm/NoteForm";
+import SearchBox from "../SearchBox/SearchBox";
 
 export default function App() {
   const [query, setQuery] = useState("");
@@ -27,7 +28,8 @@ export default function App() {
   return (
     <div className={css.app}>
       <header className={css.toolbar}>
-        {/* Компонент SearchBox */}
+        <SearchBox />
+
         {isSuccess && totalPages > 1 && (
           <Pagination
             totalPages={totalPages}
@@ -35,9 +37,11 @@ export default function App() {
             setCurrentPage={setCurrentPage}
           />
         )}
+
         <button onClick={openModal} className={css.button}>
           Create note +
         </button>
+
         {isModalOpen && (
           <Modal onClose={closeModal}>
             <NoteForm onClose={closeModal} />

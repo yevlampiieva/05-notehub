@@ -1,11 +1,15 @@
 import axios from "axios";
 import { Note } from "../types/note";
 
-// const myKey = import.meta.env.VITE_NOTEHUB_TOKEN;
-
-export interface fetchNotesResponse {
+interface fetchNotesResponse {
   notes: Note[];
   totalPages: number;
+}
+
+interface newNote {
+  title: string;
+  content?: string;
+  tag: "Work" | "Personal" | "Meeting" | "Shopping" | "Todo";
 }
 
 export const fetchNotes = async (query: string, page: number): Promise<fetchNotesResponse> => {
@@ -25,6 +29,23 @@ export const fetchNotes = async (query: string, page: number): Promise<fetchNote
   return response.data;
 };
 
-export function createNote() {}
+export const createNote = async (newNote: newNote): Promise<Note> => {
+  const response = await axios.post<Note>(`https://notehub-public.goit.study/api/notes`, newNote, {
+    headers: {
+      Authorization: `Bearer ${import.meta.env.VITE_NOTEHUB_TOKEN}`,
+    },
+  });
+  return response.data;
+};
 
-export function deleteNote() {}
+export const deleteNote = async (noteId: string): Promise<Note> => {
+  const response = await axios.delete<Note>(
+    `https://notehub-public.goit.study/api/notes/${noteId}`,
+    {
+      headers: {
+        Authorization: `Bearer ${import.meta.env.VITE_NOTEHUB_TOKEN}`,
+      },
+    }
+  );
+  return response.data;
+};
