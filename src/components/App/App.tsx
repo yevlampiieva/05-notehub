@@ -1,8 +1,10 @@
 import { useState } from "react";
 import { useQuery, keepPreviousData } from "@tanstack/react-query";
+import { useDebouncedCallback } from "use-debounce";
 import NoteList from "../NoteList/NoteList";
 import Pagination from "../Pagination/Pagination";
-
+import Loader from "../Loader/Loader";
+import ErrorMessage from "../ErrorMessage/ErrorMessage";
 import { fetchNotes } from "../../services/noteService";
 import css from "./App.module.css";
 import Modal from "../Modal/Modal";
@@ -25,10 +27,12 @@ export default function App() {
   const openModal = () => setIsModalOpen(true);
   const closeModal = () => setIsModalOpen(false);
 
+  const debouncedQuery = useDebouncedCallback(setQuery, 300);
+
   return (
     <div className={css.app}>
       <header className={css.toolbar}>
-        <SearchBox />
+        <SearchBox value={query} onSearch={debouncedQuery} />
 
         {isSuccess && totalPages > 1 && (
           <Pagination
@@ -48,6 +52,10 @@ export default function App() {
           </Modal>
         )}
       </header>
+
+      {isLoading && <Loader />}
+
+      {isError && <ErrorMessage />}
 
       {data?.notes && <NoteList items={data.notes} />}
     </div>
